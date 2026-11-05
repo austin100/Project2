@@ -1,0 +1,69 @@
+---
+title: "Project 2"
+author: "Austin Lio, Prithvi Namburi"
+date: "2026-10-31"
+output:
+  pdf_document:
+    number_sections: true
+    fig_caption: true
+    extra_dependencies: ["float"]
+---
+```{r echo=FALSE, include=FALSE, message=FALSE}
+# all library load statements here
+
+# Here is a command used to connect Git to my Github Repository
+# install.packages("usethis")
+
+
+
+# Libraries 
+library(caret) # for training and cross validation
+library(knitr) # for kable table rendering
+library (tidyverse) # tibble
+library(ggplot2) # plotting
+library(car) # for VIF
+# two libraries for applying robust std errors:
+library(lmtest) # for Breusch-Pagan test
+library(sandwich)
+library(modelsummary)
+
+
+r.version <- "4.3.2"
+seed.val <- 123456
+```
+
+
+# Overview
+
+ 
+
+# Data Description and Processing
+
+
+
+*Outcome/ Dependent Variable*: 
+ 
+
+# Data Exploration
+
+
+
+
+# Modeling 
+
+
+
+## Hypothesis
+
+## Model 1:
+
+
+## Model 2: 
+
+
+# Predicting with Models 1 and 2
+
+
+
+# Summary and Conclusions
+
