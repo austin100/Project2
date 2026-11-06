@@ -35,7 +35,7 @@ seed.val <- 123456
 
 # Overview
 
-Workplace absenteeism is time taken off of work due illness or other reasons. 
+Workplace absenteeism is time taken off of work due factors such as illness.
 
  
 # Data Description and Processing
@@ -48,10 +48,15 @@ The dataset contains 19 columns and 740 rows.
 
 absence.df = read.csv("Absenteeism_at_work.csv")
 
-# use this generated from GenAI to convert absence hours to a categorical factor
-absence.df$absent <- ifelse(absence.df$Absenteeism.time.in.hours > 0, "Yes", "No")
 
 
+absence.df$Reason.for.absence = factor(absence.df$Reason.for.absence)
+absence.df$Day.of.the.week = factor (absence.df$Day.of.the.week)
+absence.df$Seasons = factor(absence.df$Seasons)
+absence.df$Disciplinary.failure = factor(absence.df$Disciplinary.failure)
+absence.df$Education = factor(absence.df$Education)
+absence.df$Social.drinker = factor(absence.df$Social.drinker)
+absence.df$Social.smoker = factor(absence.df$Social.smoker)
 
 
 ```
@@ -122,15 +127,17 @@ Absences attested by the International Code of Diseases (ICD) stratified into 21
 
 ```{r, include=FALSE}
 #Modeling for all ten predictors
-absent.lm <- glm(
-  absent ~ Reason.for.absence +	Month.of.absence + Day.of.the.week + Seasons +	Transportation.expense	+ Distance.from. Residence.to.Work +	Service.time	+ Age + 	Work.load.Average/day +	Hit.target	+ Disciplinary.failure	+ Education +	Son	+ Social.drinker +	Social.smoker +	Pet + 	Weight	+ Height	+Body.mass.index,
+
+
+
+absent.lm <- lm(Absenteeism.time.in.hours ~ Reason.for.absence +	Month.of.absence + Day.of.the.week + Seasons +	Transportation.expense	+ Distance.from.Residence.to.Work +	Service.time	+ Age + Work.load.Average.day +	Hit.target	+ Disciplinary.failure	+ Education +	Son	+ Social.drinker +	Social.smoker +	Pet + 	Weight	+ Height	+Body.mass.index,
   data = absence.df
 )
-model.summary <- summary(coupon.lm)
+model.summary <- summary(absent.lm)
 
-coupon.step <- step(coupon.lm, trace = 0)
+absent.step <- step(absent.lm, trace = 0)
 
-model2.summary <- summary(coupon.step)
+model2.summary <- summary(absent.step)
 ```
 
 ## Hypothesis
