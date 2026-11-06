@@ -35,7 +35,7 @@ seed.val <- 123456
 
 # Overview
 
-Workplace absenteeism is time taken off of work due illness or other reasons. 
+Workplace absenteeism is time taken off of work due factors such as illness.
 
  
 # Data Description and Processing
@@ -122,8 +122,7 @@ Absences attested by the International Code of Diseases (ICD) stratified into 21
 
 ```{r, include=FALSE}
 #Modeling for all ten predictors
-absent.lm <- glm(
-  absent ~ Reason.for.absence +	Month.of.absence + Day.of.the.week + Seasons +	Transportation.expense	+ Distance.from. Residence.to.Work +	Service.time	+ Age + 	Work.load.Average/day +	Hit.target	+ Disciplinary.failure	+ Education +	Son	+ Social.drinker +	Social.smoker +	Pet + 	Weight	+ Height	+Body.mass.index,
+absent.glm <- glm(absent ~ Reason.for.absence +	Month.of.absence + Day.of.the.week + Seasons +	Transportation.expense	+ Distance.from.Residence.to.Work +	Service.time	+ Age + 	Work.load.Average/day +	Hit.target	+ Disciplinary.failure	+ Education +	Son	+ Social.drinker +	Social.smoker +	Pet + 	Weight	+ Height	+Body.mass.index,
   data = absence.df
 )
 model.summary <- summary(coupon.lm)
