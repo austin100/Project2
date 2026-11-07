@@ -44,7 +44,7 @@ Our main research question that we will investigate is: How do factors such as d
 
 The dataset that will be used in this project is from the University of California Irvine Machine Learning Repository [1]. This dataset contains records of absenteeism at work from July 2007 to July 2010 at a courier company in Brazil. 
 
-The dataset contains 19 columns and 740 rows. 
+The dataset contains 21 columns and 740 rows. 
 
 
 ```{R}
@@ -155,7 +155,7 @@ We list the relevant columns below. Note that we choose to not include the first
  
 Our dependent variable is the number of hours that a person is absent from work. This is labeled in our dataset as Absenteeism time in hours. It is a numeric variable. 
 
-The data set was checked for missing values, and none were removed. 
+The data set was checked for missing values, and none were removed. Thus, we remain with 740 observations and 20 variables (1 being ID, which is excluded).
 
 
 # Data Exploration
