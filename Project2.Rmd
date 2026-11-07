@@ -66,36 +66,37 @@ absence.df$Social.smoker = factor(absence.df$Social.smoker)
 
 We list the relevant columns below. Note that we choose to not include the first column, as that is the Individual identification (ID) number of the person that was absent. 
 
-2. Reason for absence (Categorical - factor). This is further broken down into into 21 categories (I to XXI) of the International Code of Diseases (ICD) as follows:\
+2. Reason for absence (Categorical - factor). This is further broken down into into 28 categories. The International Code of Diseases (ICD) as part of categories 1 through 21, as follows:\
 
 --> 1. Certain infectious and parasitic diseases\
 --> 2. Neoplasms\
 --> 3. Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism\
---> 4. Endocrine, nutritional and metabolic diseases  
-5 Mental and behavioural disorders  
-6. Diseases of the nervous system  
-7. Diseases of the eye and adnexa  
-8. Diseases of the ear and mastoid process  
-9. Diseases of the circulatory system  
-10. Diseases of the respiratory system  
-11. Diseases of the digestive system  
-12. Diseases of the skin and subcutaneous tissue  
-13. Diseases of the musculoskeletal system and connective tissue  
-14. Diseases of the genitourinary system  
-15. Pregnancy, childbirth and the puerperium  
-16. Certain conditions originating in the perinatal period  
-17. Congenital malformations, deformations and chromosomal abnormalities  
-18. Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified  
-19. Injury, poisoning and certain other consequences of external causes  
-20. External causes of morbidity and mortality  
-21. Factors influencing health status and contact with health services.
-22. Patient follow-up
-23. Medical consultation 
-24. Blood donation 
-25. Laboratory examination 
-26. Unjustified absence 
-27. Physiotherapy 
-28. Dental consultation 
+--> 4. Endocrine, nutritional and metabolic diseases\
+--> 5. Mental and behavioural disorders\  
+--> 6. Diseases of the nervous system\  
+--> 7. Diseases of the eye and adnexa\  
+--> 8. Diseases of the ear and mastoid process\  
+--> 9. Diseases of the circulatory system\   
+--> 10. Diseases of the respiratory system\  
+--> 11. Diseases of the digestive system\  
+--> 12. Diseases of the skin and subcutaneous tissue\  
+--> 13. Diseases of the musculoskeletal system and connective tissue\  
+--> 14. Diseases of the genitourinary system\  
+--> 15. Pregnancy, childbirth and the puerperium\  
+--> 16. Certain conditions originating in the perinatal period\  
+--> 17. Congenital malformations, deformations and chromosomal abnormalities\  
+--> 18. Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified\  
+--> 19. Injury, poisoning and certain other consequences of external causes\  
+--> 20. External causes of morbidity and mortality\  
+--> 21. Factors influencing health status and contact with health services.\
+
+--> 22. Patient follow-up\
+--> 23. Medical consultation\ 
+--> 24. Blood donation\ 
+--> 25. Laboratory examination\ 
+--> 26. Unjustified absence\ 
+--> 27. Physiotherapy\ 
+--> 28. Dental consultation\
 
 3. Month of absence
 
@@ -150,15 +151,645 @@ We list the relevant columns below. Note that we choose to not include the first
 
 20. Body mass index
 
-21. Absenteeism time in hours (target)
-
 *Outcome/ Dependent Variable*: 
  
+Our dependent variable is the number of hours that a person is absent from work. This is labeled in our dataset as Absenteeism time in hours. It is a numeric variable. 
+
+The data set was checked for missing values, and none were removed. 
+
 
 # Data Exploration
 
+We will now explore each variable in our dataset, starting with Reason for absence. 
+
+## Reason for absence
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+Reasonforabsence <- factor(
+  absence.df$Reason.for.absence,
+  levels = c("1", "2", "3", "4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"),
+  labels = c("Certain infectious and parasitic diseases","Neoplasms","Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism", "4. Endocrine, nutritional and metabolic diseases","Mental and behavioural disorders","Diseases of the nervous system","Diseases of the eye and adnexa","Diseases of the ear and mastoid process", "Diseases of the circulatory system","Diseases of the respiratory system","Diseases of the digestive system","Diseases of the skin and subcutaneous tissue","Diseases of the musculoskeletal system and connective tissue","Diseases of the genitourinary system","Pregnancy, childbirth and the puerperium","Certain conditions originating in the perinatal period","Congenital malformations, deformations and chromosomal abnormalities","Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified","Injury, poisoning and certain other consequences of external causes","External causes of morbidity and mortality","Factors influencing health status and contact with health services.","Patient follow-up","Medical consultation","Blood donation","Laboratory examination","Unjustified absence","Physiotherapy","Dental consultation"
+            )
+)
+
+counts <- table(Reasonforabsence)
+
+st.tbl <- data.frame(
+  Reasons = names(counts),
+  Count = as.integer(counts),
+  Percent = 100 * as.numeric(counts) / sum(counts)
+)
+
+kable(st.tbl, digits = 2, row.names = FALSE, caption = "Reasons for absence Table")
+```
+
+```{r, echo = FALSE, fig.pos = 'H', out.width = "80%", fig.align = "center", fig.cap = "Bar Chart of the Reason for absence Variable"}
+# 1. Sort the table from lowest to highest so the largest bars sit at the top when flipped
+counts_sorted <- sort(table(Reasonforabsence))
+
+# 2. Automatically wrap long text lines at 40 characters
+wrapped_labels <- sapply(names(counts_sorted), function(x) paste(strwrap(x, width = 40), collapse = "\n"))
+
+# 3. Increase the left margin (las=2 requires extra space for horizontal text)
+# c(bottom, left, top, right) - default is c(5, 4, 4, 2)
+old_mar <- par()$mar
+par(mar = c(5, 18, 2, 2)) 
+
+# 4. Plot the horizontal bar chart
+barplot(counts_sorted,
+        horiz = TRUE,              # Flips the bar chart horizontally
+        las = 2,                   # Rotates axis text to be horizontal/readable
+        names.arg = wrapped_labels,# Applies the wrapped labels
+        cex.names = 0.65,          # Slightly shrinks text size to fit 28 rows cleanly
+        main = "",
+        xlab = "Number of Hours",  # Swapped axes labels to match horizontal flip
+        ylab = "",                 # Left blank because labels make it obvious
+        col = "gray")
+
+# Reset margins back to default
+par(mar = old_mar)
+```
+
+## Month of absence
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+Monthofabsence <- factor(
+  absence.df$Month.of.absence,
+  levels = c("0", "1", "2", "3", "4","5","6","7","8","9","10","11","12"),
+  labels = c("Unknown", "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+)
+
+Monthofabsencecounts <- table(Monthofabsence)
+
+st.tbl <- data.frame(
+  Month = names(Monthofabsencecounts),
+  Count = as.integer(Monthofabsencecounts),
+  Percent = 100 * as.numeric(Monthofabsencecounts) / sum(Monthofabsencecounts)
+)
+
+kable(st.tbl, digits = 2, row.names = FALSE, caption = "Months of Absence Table")
+```
+
+```{r, echo = FALSE, fig.pos = 'H', out.width = "80%", fig.align = "center", fig.cap = "Bar Chart of the Months of Absence Variable"}
+# 1. Sort the table from lowest to highest so the largest bars sit at the top when flipped
+counts_sorted <- sort(Monthofabsencecounts)
+
+# 2. Automatically wrap long text lines at 40 characters
+wrapped_labels <- sapply(names(counts_sorted), function(x) paste(strwrap(x, width = 40), collapse = "\n"))
+
+# 3. Increase the left margin (las=2 requires extra space for horizontal text)
+# c(bottom, left, top, right) - default is c(5, 4, 4, 2)
+old_mar <- par()$mar
+par(mar = c(5, 18, 2, 2)) 
+
+# 4. Plot the horizontal bar chart
+barplot(counts_sorted,
+        horiz = TRUE,              # Flips the bar chart horizontally
+        las = 2,                   # Rotates axis text to be horizontal/readable
+        names.arg = wrapped_labels,# Applies the wrapped labels
+        cex.names = 0.65,          # Slightly shrinks text size to fit 28 rows cleanly
+        main = "",
+        xlab = "Months",  # Swapped axes labels to match horizontal flip
+        ylab = "",                 # Left blank because labels make it obvious
+        col = "gray")
+
+# Reset margins back to default
+par(mar = old_mar)
+```
+
+## Day of the week 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+Dayoftheweek <- factor(
+  absence.df$Day.of.the.week,
+  levels = c("2", "3", "4","5","6"),
+  labels = c("Monday", "Tuesday", "Wednesday","Thursday", "Friday")
+)
+
+Dayoftheweekcounts <- table(Dayoftheweek)
+
+st.tbl <- data.frame(
+  Weekday = names(Dayoftheweekcounts),
+  Count = as.integer(Dayoftheweekcounts),
+  Percent = 100 * as.numeric(Dayoftheweekcounts) / sum(Dayoftheweekcounts)
+)
+
+kable(st.tbl, digits = 2, row.names = FALSE, caption = "Day of the Week Absences Table")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Bar Chart of the Days of Week Variable"}
+# table of descriptive stats for the MedSchool variable
+barplot(Dayoftheweekcounts,
+        main = "",
+        xlab = "Day of Week",
+        ylab = "Count",
+        col = "gray")
+```
+
+## Seasons 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+Seasons <- factor(
+  absence.df$Seasons,
+  levels = c("1", "2", "3", "4"),
+  labels = c("summer", "autumn", "winter", "spring")
+)
+
+Seasonscounts <- table(Seasons)
+
+st.tbl <- data.frame(
+  Weekday = names(Seasonscounts),
+  Count = as.integer(Seasonscounts),
+  Percent = 100 * as.numeric(Seasonscounts) / sum(Seasonscounts)
+)
+
+kable(st.tbl, digits = 2, row.names = FALSE, caption = "Seasons of Absence Table")
+```
 
 
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Bar Chart of the Seasons Variable"}
+
+barplot(Seasonscounts,
+        main = "",
+        xlab = "Day of Week",
+        ylab = "Count",
+        col = "gray")
+```
+
+## Transportation expense
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+# Calculate statistics for the Beds variable
+data  <- absence.df$Transportation.expense
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Transportation Expense Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Transportation expense Variable, with Density Curve Overlaid"  }
+hist(absence.df$Transportation.expense, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Transportation Expense (in Brazilian Reals)",
+     ylab = "Density")
+lines(density(absence.df$Transportation.expense), col = "blue", lwd = 2)
+```
+
+## Distance from Residence to Work 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Distance.from.Residence.to.Work
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Distance from Residence to Work Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Distance from Residence to work Variable, with Density Curve Overlaid"  }
+hist(absence.df$Distance.from.Residence.to.Work, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Distance (kilometers)",
+     ylab = "Density")
+lines(density(absence.df$Distance.from.Residence.to.Work), col = "blue", lwd = 2)
+```
+
+## Service time
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Service.time
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Service time Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Age Variable, with Density Curve Overlaid"  }
+hist(absence.df$Service.time, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Time (Years)",
+     ylab = "Density")
+lines(density(absence.df$Service.time), col = "blue", lwd = 2)
+```
+
+## Age
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Age
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Age Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Age Variable, with Density Curve Overlaid"  }
+hist(absence.df$Age, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Age (Years)",
+     ylab = "Density")
+lines(density(absence.df$Age), col = "blue", lwd = 2)
+```
+
+
+## Work load Average/day 
+fix here
+theres an error
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Work.load.Average.day
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Work load Average/Day Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Work load Average/Day Variable, with Density Curve Overlaid"  }
+hist(absence.df$Work.load.Average.day, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Daily Workload Average Per Day",
+     ylab = "Density")
+lines(density(absence.df$Work.load.Average.day), col = "blue", lwd = 2)
+```
+
+## Hit target
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Hit.target
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Hit target Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Hit target Variable, with Density Curve Overlaid"  }
+hist(absence.df$Hit.target, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Daily Workload Average Per Day",
+     ylab = "Density")
+lines(density(absence.df$Hit.target), col = "blue", lwd = 2)
+```
+
+## Disciplinary failure
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+Disciplinaryfailure <- factor(
+  absence.df$Disciplinary.failure,
+  levels = c("0", "1"),
+  labels = c("No", "Yes")
+)
+
+Disciplinaryfailurecounts <- table(Disciplinaryfailure)
+
+st.tbl <- data.frame(
+  Weekday = names(Disciplinaryfailurecounts),
+  Count = as.integer(Disciplinaryfailurecounts),
+  Percent = 100 * as.numeric(Disciplinaryfailurecounts) / sum(Disciplinaryfailurecounts)
+)
+
+kable(st.tbl, digits = 2, row.names = FALSE, caption = "Disciplinary failure Table")
+```
+
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Bar Chart of the Seasons Variable"}
+
+barplot(Disciplinaryfailurecounts,
+        main = "",
+        xlab = "Disciplined?",
+        ylab = "Count",
+        col = "gray")
+```
+
+## Education 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+Educations <- factor(
+  absence.df$Education,
+  levels = c("1", "2", "3", "4"),
+  labels = c("high school", "graduate" , "postgraduate", "master and doctor")
+)
+
+Educationscounts <- table(Educations)
+
+st.tbl <- data.frame(
+  Weekday = names(Educationscounts),
+  Count = as.integer(Educationscounts),
+  Percent = 100 * as.numeric(Educationscounts) / sum(Educationscounts)
+)
+
+kable(st.tbl, digits = 2, row.names = FALSE, caption = "Education Table")
+```
+
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Bar Chart of the Education Variable"}
+
+barplot(Disciplinaryfailurecounts,
+        main = "",
+        xlab = "Education level",
+        ylab = "Count",
+        col = "gray")
+```
+
+## Son 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Son
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Son Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Son Variable, with Density Curve Overlaid"  }
+hist(absence.df$Son, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Number of Sons",
+     ylab = "Density")
+lines(density(absence.df$Son), col = "blue", lwd = 2)
+```
+
+
+## Social drinker 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+Socialdrinker <- factor(
+  absence.df$Social.drinker,
+  levels = c("0", "1"),
+  labels = c("No", "Yes")
+)
+
+Socialdrinkercounts <- table(Socialdrinker)
+
+st.tbl <- data.frame(
+  Weekday = names(Socialdrinkercounts),
+  Count = as.integer(Socialdrinkercounts),
+  Percent = 100 * as.numeric(Socialdrinkercounts) / sum(Socialdrinkercounts)
+)
+
+kable(st.tbl, digits = 2, row.names = FALSE, caption = "Social drinker Table")
+```
+
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Bar Chart of the Social drinker Variable"}
+
+barplot(Socialdrinkercounts,
+        main = "",
+        xlab = "Drinker?",
+        ylab = "Count",
+        col = "gray")
+```
+
+## Social smoker 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+Socialsmoker <- factor(
+  absence.df$Social.smoker,
+  levels = c("0", "1"),
+  labels = c("No", "Yes")
+)
+
+Socialsmokercounts <- table(Socialsmoker)
+
+st.tbl <- data.frame(
+  Weekday = names(Socialsmokercounts),
+  Count = as.integer(Socialsmokercounts),
+  Percent = 100 * as.numeric(Socialsmokercounts) / sum(Socialsmokercounts)
+)
+
+kable(st.tbl, digits = 2, row.names = FALSE, caption = "Social smoker Table")
+```
+
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Bar Chart of the Social smoker Variable"}
+
+barplot(Socialsmokercounts,
+        main = "",
+        xlab = "Smoker?",
+        ylab = "Count",
+        col = "gray")
+```
+
+## Pet 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Pet
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Pet Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Pet Variable, with Density Curve Overlaid"  }
+hist(absence.df$Pet, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Number of Sons",
+     ylab = "Density")
+lines(density(absence.df$Pet), col = "blue", lwd = 2)
+```
+
+## Weight 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Weight
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Weight Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Weight Variable, with Density Curve Overlaid"  }
+hist(absence.df$Weight, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Weight",
+     ylab = "Density")
+lines(density(absence.df$Weight), col = "blue", lwd = 2)
+```
+
+## Height 
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Height
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Height Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Height Variable, with Density Curve Overlaid"  }
+hist(absence.df$Height, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Height",
+     ylab = "Density")
+lines(density(absence.df$Height), col = "blue", lwd = 2)
+```
+
+## Body mass index
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
+
+data  <- absence.df$Body.mass.index
+mn    <- min(data)
+mx    <- max(data)
+avg   <- round(mean(data), 2)
+md    <- median(data)
+std   <- round(sd(data), 2)
+
+# Create a horizontal data frame
+st.tbl <- data.frame(
+  Min    = mn,
+  Mean   = avg,
+  Median = md,
+  Max    = mx,
+  StdDev = std
+)
+
+# Render the horizontal table
+kable(st.tbl, digits = 2, caption = "Body mass index Variable Descriptive Statistics")
+```
+
+```{r, echo=FALSE, fig.pos = 'H', out.width = "50%", fig.align = "center", fig.cap = "Histogram showing distribution of Body mass index Variable, with Density Curve Overlaid"  }
+hist(absence.df$Body.mass.index, freq = FALSE, # freq = FALSE for density scale on y-axis
+     main = "", # turn off the title as using the fig.cap
+     xlab = "Height",
+     ylab = "Density")
+lines(density(absence.df$Body.mass.index), col = "blue", lwd = 2)
+```
 
 # Modeling 
 
@@ -178,6 +809,11 @@ model2.summary <- summary(absent.step)
 ```
 
 ## Hypothesis
+We hypothesize that 
+
+Our null hypothesis is that all predictor coefficients, excluding the intercept, equal zero. This means that the predictors have zero effect on the response variable. Our alternative hypothesis is that at least one predictor coefficient is nonzero. This would mean that there is a predictor that has an effect on the response variable, and it could be increasing or decreasing the number of absenteeism hours.
+
+Using a significance level of 0.05, the overall F-test was statistically significant, with an F-statistic of 3.409 and a p-value of 2.2e-16. We find the p-value is less than the significance level, as 2.2e-16 is less than .05. Therefore, we reject the null hypothesis and conclude that at least one of our predictors has an effect on the number of absenteeism hours.
 
 ## Model 1:
 ```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
@@ -227,7 +863,7 @@ kable(
 )
 ```
 ```{r, echo=FALSE, fig.pos = 'H', out.width = "50%"}
-model.vif <- vif(coupon.lm)
+model.vif <- vif(absent.lm)
 
 vif.tbl <- data.frame(
   Predictor = rownames(model.vif),
